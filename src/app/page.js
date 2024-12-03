@@ -1,133 +1,147 @@
 'use client';
 
-// Import necessary dependencies
 import { useRouter } from 'next/navigation';
 import { useQuiz } from '@/context/QuizContext';
 import { motion } from 'framer-motion';
-import { FaBrain, FaTrophy, FaClock } from 'react-icons/fa';
+import { 
+  Container, 
+  Typography, 
+  Button, 
+  Box, 
+  Grid, 
+  Card, 
+  CardContent,
+  CardActions 
+} from '@mui/material';
+import {
+  QuestionMark as QuestionMarkIcon,
+  Timer as TimerIcon,
+  EmojiEvents as EmojiEventsIcon,
+  PlayArrow as PlayArrowIcon
+} from '@mui/icons-material';
 
 export default function Home() {
-  // Initialize router for navigation
   const router = useRouter();
-  // Get startQuiz function from QuizContext
   const { startQuiz } = useQuiz();
 
-  // Define feature cards data
-  const features = [
-    {
-      icon: <FaBrain className="w-8 h-8" />,
-      title: "Test Your Knowledge",
-      description: "Challenge yourself with questions across various computer science topics"
-    },
-    {
-      icon: <FaTrophy className="w-8 h-8" />,
-      title: "Get Instant Results",
-      description: "Receive detailed feedback and scores immediately after completion"
-    },
-    {
-      icon: <FaClock className="w-8 h-8" />,
-      title: "Quick & Engaging",
-      description: "5 carefully selected questions to keep you focused and motivated"
-    }
-  ];
-
-  // Handler for starting the quiz
   const handleStartQuiz = async () => {
-    // Initialize new quiz questions
     await startQuiz();
-    // Navigate to quiz page
     router.push('/quiz');
   };
 
+  const features = [
+    {
+      icon: <QuestionMarkIcon sx={{ fontSize: 40 }} />,
+      title: 'Dynamic Questions',
+      description: 'Test your knowledge with a variety of computer science questions'
+    },
+    {
+      icon: <TimerIcon sx={{ fontSize: 40 }} />,
+      title: 'Timed Challenges',
+      description: '30 seconds per question to keep you on your toes'
+    },
+    {
+      icon: <EmojiEventsIcon sx={{ fontSize: 40 }} />,
+      title: 'Instant Results',
+      description: 'Get immediate feedback on your performance'
+    }
+  ];
+
   return (
-    <main className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50">
-      <div className="max-w-6xl mx-auto px-4 py-16">
-        {/* Hero Section with Animation */}
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="text-center space-y-8 mb-16"
-        >
-          {/* Main Title with Gradient Effect */}
-          <h1 className="text-6xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 text-transparent bg-clip-text">
-            Computer Science Quiz
-          </h1>
-          
-          {/* Description Text */}
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Challenge your computer science knowledge with our interactive quiz! Answer questions 
-            across different topics and difficulty levels.
-          </p>
-
-          {/* Start Quiz Button with Hover Animation */}
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={handleStartQuiz}
-            className="px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg 
-                      text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300 
-                      transform hover:-translate-y-0.5"
+    <Container maxWidth="lg" sx={{ py: 8 }}>
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
+        <Box textAlign="center" mb={8}>
+          <Typography
+            variant="h2"
+            component="h1"
+            gutterBottom
+            sx={{
+              fontWeight: 'bold',
+              background: 'linear-gradient(45deg, #3f51b5 30%, #f50057 90%)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent'
+            }}
           >
-            Start Quiz Now
-          </motion.button>
-        </motion.div>
+            Computer Science Quiz
+          </Typography>
+          <Typography
+            variant="h5"
+            color="text.secondary"
+            paragraph
+            sx={{ mb: 4 }}
+          >
+            Test your knowledge with our interactive quiz!
+          </Typography>
+          <Button
+            variant="contained"
+            size="large"
+            onClick={handleStartQuiz}
+            startIcon={<PlayArrowIcon />}
+            sx={{
+              background: 'linear-gradient(45deg, #3f51b5 30%, #f50057 90%)',
+              color: 'white',
+              px: 4,
+              py: 1.5,
+              fontSize: '1.2rem'
+            }}
+          >
+            Start Quiz
+          </Button>
+        </Box>
 
-        {/* Features Grid Section */}
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-          className="grid md:grid-cols-3 gap-8 mt-16"
-        >
-          {/* Map through features array to create feature cards */}
+        <Grid container spacing={4}>
           {features.map((feature, index) => (
-            <motion.div
-              key={index}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3 + index * 0.1 }}
-              className="bg-white p-8 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300"
-            >
-              <div className="text-blue-600 mb-4">
-                {feature.icon}
-              </div>
-              <h3 className="text-xl font-semibold text-gray-800 mb-2">
-                {feature.title}
-              </h3>
-              <p className="text-gray-600">
-                {feature.description}
-              </p>
-            </motion.div>
+            <Grid item xs={12} md={4} key={index}>
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+              >
+                <Card 
+                  sx={{ 
+                    height: '100%',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    '&:hover': {
+                      transform: 'translateY(-4px)',
+                      boxShadow: 4,
+                      transition: 'all 0.3s ease-in-out'
+                    }
+                  }}
+                >
+                  <CardContent sx={{ flexGrow: 1, textAlign: 'center' }}>
+                    <Box
+                      sx={{
+                        display: 'flex',
+                        justifyContent: 'center',
+                        mb: 2,
+                        color: 'primary.main'
+                      }}
+                    >
+                      {feature.icon}
+                    </Box>
+                    <Typography
+                      gutterBottom
+                      variant="h5"
+                      component="h2"
+                      sx={{ fontWeight: 'bold' }}
+                    >
+                      {feature.title}
+                    </Typography>
+                    <Typography color="text.secondary">
+                      {feature.description}
+                    </Typography>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            </Grid>
           ))}
-        </motion.div>
-
-        {/* How It Works Section */}
-        <motion.div 
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.6 }}
-          className="mt-16 text-center"
-        >
-          <h2 className="text-2xl font-semibold text-gray-800 mb-4">
-            How It Works
-          </h2>
-          {/* Steps Display */}
-          <div className="flex justify-center space-x-8">
-            <div className="flex items-center space-x-2">
-              <div className="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-semibold">1</div>
-              <span>Start Quiz</span>
-            </div>
-            <div className="flex items-center space-x-2">
-              <div className="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-semibold">2</div>
-              <span>Answer Questions</span>
-            </div>
-            <div className="flex items-center space-x-2">
-              <div className="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-semibold">3</div>
-              <span>Get Results</span>
-            </div>
-          </div>
-        </motion.div>
-      </div>
-    </main>
+        </Grid>
+      </motion.div>
+    </Container>
   );
 }
