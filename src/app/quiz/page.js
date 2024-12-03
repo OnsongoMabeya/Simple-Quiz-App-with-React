@@ -1,4 +1,5 @@
 'use client';
+// Import necessary dependencies
 import { useRouter } from 'next/navigation';
 import { useQuiz } from '@/context/QuizContext';
 import { useEffect, useState } from 'react';
@@ -6,7 +7,10 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { FaClock, FaLightbulb, FaArrowRight } from 'react-icons/fa';
 
 export default function Quiz() {
+  // Initialize router for navigation
   const router = useRouter();
+  
+  // Get quiz state and functions from context
   const {
     questions,
     currentQuestionIndex,
@@ -17,34 +21,40 @@ export default function Quiz() {
     error
   } = useQuiz();
 
-  const [timeLeft, setTimeLeft] = useState(30);
+  // Local state for timer and hint functionality
+  const [timeLeft, setTimeLeft] = useState(30); // 30 seconds per question
   const [showHint, setShowHint] = useState(false);
 
+  // Effect to redirect if no questions are loaded
   useEffect(() => {
     if (!isLoading && questions.length === 0 && !error) {
       router.push('/');
     }
   }, [questions, router, isLoading, error]);
 
+  // Timer effect - counts down from 30 seconds
   useEffect(() => {
     const timer = setInterval(() => {
       setTimeLeft((prev) => {
         if (prev <= 1) {
-          handleNext();
-          return 30;
+          handleNext(); // Auto-advance when time runs out
+          return 30; // Reset timer
         }
         return prev - 1;
       });
     }, 1000);
 
+    // Cleanup timer on unmount
     return () => clearInterval(timer);
   }, [currentQuestionIndex]);
 
+  // Reset timer and hide hint when question changes
   useEffect(() => {
     setTimeLeft(30);
     setShowHint(false);
   }, [currentQuestionIndex]);
 
+  // Loading state UI
   if (isLoading) {
     return (
       <main className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-blue-50 to-indigo-50">
@@ -59,6 +69,7 @@ export default function Quiz() {
     );
   }
 
+  // Error state UI
   if (error) {
     return (
       <main className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-blue-50 to-indigo-50">
@@ -67,18 +78,22 @@ export default function Quiz() {
     );
   }
 
+  // Return null if no questions available
   if (!questions || questions.length === 0) return null;
 
+  // Get current question and randomize answer options
   const currentQuestion = questions[currentQuestionIndex];
   const answers = [
     ...currentQuestion.incorrect_answers,
     currentQuestion.correct_answer,
   ].sort(() => Math.random() - 0.5);
 
+  // Handle answer selection
   const handleAnswerSelect = (answer) => {
     submitAnswer(answer);
   };
 
+  // Handle next question or finish quiz
   const handleNext = () => {
     if (currentQuestionIndex === questions.length - 1) {
       router.push('/result');
@@ -87,6 +102,7 @@ export default function Quiz() {
     }
   };
 
+  // Get appropriate color for difficulty badge
   const getDifficultyColor = (difficulty) => {
     switch (difficulty) {
       case 'easy':
@@ -100,6 +116,7 @@ export default function Quiz() {
     }
   };
 
+  // Generate hint based on question category and answer length
   const getHint = () => {
     const correctAnswer = currentQuestion.correct_answer;
     return `Think about ${currentQuestion.category} concepts. The answer is related to ${correctAnswer.length} characters long.`;
@@ -113,7 +130,7 @@ export default function Quiz() {
           animate={{ opacity: 1, y: 0 }}
           className="bg-white rounded-2xl shadow-xl p-8 mb-8 relative"
         >
-          {/* Progress and Timer */}
+          {/* Timer Display */}
           <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-white px-6 py-2 rounded-full shadow-lg">
             <div className="flex items-center space-x-2">
               <FaClock className="text-blue-600" />
@@ -130,6 +147,7 @@ export default function Quiz() {
               ></div>
             </div>
 
+            {/* Question Info Header */}
             <div className="flex justify-between items-center mb-6">
               <p className="text-sm font-medium text-gray-500">
                 Question {currentQuestionIndex + 1} of {questions.length}
@@ -144,6 +162,7 @@ export default function Quiz() {
               </div>
             </div>
 
+            {/* Question Text */}
             <motion.h2
               key={currentQuestionIndex}
               initial={{ opacity: 0, y: 20 }}
@@ -153,6 +172,7 @@ export default function Quiz() {
             />
           </div>
 
+          {/* Answer Options with Animation */}
           <AnimatePresence mode="wait">
             <motion.div
               key={currentQuestionIndex}
@@ -162,7 +182,7 @@ export default function Quiz() {
               className="space-y-4"
             >
               {answers.map((answer, index) => {
-                const letter = String.fromCharCode(65 + index); // A, B, C, D
+                const letter = String.fromCharCode(65 + index); // Convert 0,1,2,3 to A,B,C,D
                 const isSelected = userAnswers[currentQuestionIndex] === answer;
                 return (
                   <motion.button
@@ -190,6 +210,7 @@ export default function Quiz() {
             </motion.div>
           </AnimatePresence>
 
+          {/* Bottom Controls - Hint and Next Button */}
           <div className="mt-8 flex justify-between items-center">
             <button
               onClick={() => setShowHint(!showHint)}
@@ -207,7 +228,7 @@ export default function Quiz() {
                 whileTap={{ scale: 0.95 }}
                 onClick={handleNext}
                 className="flex items-center space-x-2 px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 
-                         text-white rounded-lg shadow-md hover:shadow-lg transition-all duration-300"
+                          text-white rounded-lg shadow-md hover:shadow-lg transition-all duration-300"
               >
                 <span>{currentQuestionIndex === questions.length - 1 ? 'Finish' : 'Next'}</span>
                 <FaArrowRight />
@@ -215,6 +236,7 @@ export default function Quiz() {
             )}
           </div>
 
+          {/* Hint Panel with Animation */}
           <AnimatePresence>
             {showHint && (
               <motion.div
