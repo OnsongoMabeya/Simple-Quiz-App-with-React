@@ -126,3 +126,4 @@ src/
 - [Tailwind CSS](https://tailwindcss.com/) for the styling system
 - [Framer Motion](https://www.framer.com/motion/) for animations
 - [React Icons](https://react-icons.github.io/react-icons/) for the icon set
+- My software development class and professor in the frameworks class
